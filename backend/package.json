@@ -1,0 +1,32 @@
+{
+  "name": "aksharoddhaara-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Aksharoddhaara - Kannada Manuscript & Document Restoration",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node test/service.test.js && node test/enhance.test.js && node test/ocr.test.js && node test/recovery.test.js",
+    "test:service": "node test/service.test.js",
+    "test:enhance": "node test/enhance.test.js",
+    "test:ocr": "node test/ocr.test.js",
+    "test:recovery": "node test/recovery.test.js"
+  },
+  "keywords": [
+    "kannada",
+    "heritage-preservation",
+    "ocr",
+    "document-enhancement"
+  ],
+  "author": "Aksharoddhaara Team",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jimp": "^0.22.12",
+    "multer": "^1.4.5-lts.1",
+    "tesseract.js": "^5.1.1"
+  }
+}

@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #FAF7F2;
+    color: #1C1917;
+    font-family: 'Noto Sans Kannada', system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, h4, .font-heritage {
+    font-family: 'Noto Serif Kannada', Georgia, serif;
+  }
+}
+
+/* Subtle parchment grain effect */
+.bg-parchment {
+  background-color: #FAF6ED;
+  background-image: radial-gradient(#E8DEC8 0.75px, transparent 0.75px);
+  background-size: 24px 24px;
+}
+
+/* Custom scrollbar matching heritage aesthetic */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F4EFE6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C5A059;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B08A38;
+}
