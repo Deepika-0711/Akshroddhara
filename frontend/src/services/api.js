@@ -2,7 +2,53 @@
  * Frontend API service for Aksharoddhaara
  */
 
-const API_BASE = '/api';
+/**
+ * Resolves the backend API base URL:
+ * - If VITE_API_URL is configured (e.g. on Vercel or in frontend/.env), uses it.
+ * - In local development (Vite dev server), defaults to '/api' so requests
+ *   are handled by the Vite dev server proxy (http://localhost:5000).
+ * - In production mode, defaults to the live Render backend:
+ *   https://akshroddhara.onrender.com
+ *
+ * Normalizes the base URL by:
+ * - Stripping any trailing slashes
+ * - Ensuring the '/api' path suffix is present if not already included
+ */
+export const resolveApiBase = (envUrl, isDev = false) => {
+  let base = (envUrl || '').trim();
+
+  if (!base) {
+    if (isDev) {
+      return '/api';
+    }
+    base = 'https://akshroddhara.onrender.com';
+  }
+
+  // Remove trailing slashes
+  base = base.replace(/\/+$/, '');
+
+  // If base is not '/api' and does not end with '/api', append '/api'
+  if (base !== '/api' && !base.endsWith('/api')) {
+    base = `${base}/api`;
+  }
+
+  return base;
+};
+
+export const getApiBaseUrl = () => {
+  const envUrl =
+    typeof import.meta !== 'undefined' && import.meta.env
+      ? import.meta.env.VITE_API_URL
+      : undefined;
+  const isDev =
+    typeof import.meta !== 'undefined' && import.meta.env
+      ? Boolean(import.meta.env.DEV)
+      : false;
+
+  return resolveApiBase(envUrl, isDev);
+};
+
+export const API_BASE = getApiBaseUrl();
 export const MAX_FILE_SIZE_MB = 10;
 export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 export const SUPPORTED_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp'];
@@ -44,7 +90,7 @@ export const validateFileClient = (file) => {
  */
 export const checkHealth = async () => {
   try {
-    const response = await fetch(`${API_BASE}/health`);
+    const response = await fetch(`${getApiBaseUrl()}/health`);
     if (!response.ok) {
       throw new Error(`Health check returned status ${response.status}`);
     }
@@ -60,7 +106,7 @@ export const checkHealth = async () => {
  */
 export const fetchPresets = async () => {
   try {
-    const response = await fetch(`${API_BASE}/documents/presets`);
+    const response = await fetch(`${getApiBaseUrl()}/documents/presets`);
     if (response.ok) {
       const data = await response.json();
       return data.data?.presets || [];
@@ -86,7 +132,7 @@ export const enhanceDocumentApi = async (file, options = {}) => {
   if (options.binarizeMode) formData.append('binarizeMode', options.binarizeMode);
   if (options.adaptiveSensitivity) formData.append('adaptiveSensitivity', options.adaptiveSensitivity);
 
-  const response = await fetch(`${API_BASE}/enhance`, {
+  const response = await fetch(`${getApiBaseUrl()}/enhance`, {
     method: 'POST',
     body: formData,
   });
@@ -115,7 +161,7 @@ export const extractOcrApi = async (fileOrBlob, options = {}) => {
     formData.append('language', options.language);
   }
 
-  const response = await fetch(`${API_BASE}/ocr`, {
+  const response = await fetch(`${getApiBaseUrl()}/ocr`, {
     method: 'POST',
     body: formData,
   });
@@ -147,7 +193,7 @@ export const extractOcrApi = async (fileOrBlob, options = {}) => {
  * Request AI-assisted text recovery suggestions for user-selected unclear Kannada text
  */
 export const suggestRecoveryApi = async ({ selectedText, context = '', damageNote = '' }) => {
-  const response = await fetch(`${API_BASE}/recovery/suggest`, {
+  const response = await fetch(`${getApiBaseUrl()}/recovery/suggest`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ selectedText, context, damageNote }),
